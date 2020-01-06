@@ -1,8 +1,9 @@
 ﻿using NodaTime;
+using NodaTime.Text;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
-using System.Numerics;
 using System.Text;
 
 namespace Sigma
@@ -12,7 +13,7 @@ namespace Sigma
 
         private static readonly char[] HEX_CHARS = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 
-        private Stream output;
+        private readonly Stream output;
         private bool allowBytes;
 
         public Writer(Stream output)
@@ -30,11 +31,6 @@ namespace Sigma
         {
             this.allowBytes = allowBytes;
             WriteValue(obj);
-        }
-
-        private bool IsWs(int c)
-        {
-            return c == 0x20 || c == 0x09 || c == 0x0a || c == 0x0d;
         }
 
         private void WriteBase64(byte[] b)
@@ -186,7 +182,7 @@ namespace Sigma
             }
         }
 
-        private List<int> codepoints(string s)
+        private List<int> Codepoints(string s)
         {
             List<int> cp = new List<int>(s.Length);
             for (int i = 0; i < s.Length; i++)
@@ -200,7 +196,7 @@ namespace Sigma
         private void WriteString(string s)
         {
             WriteChar('"');
-            foreach (int c in codepoints(s))
+            foreach (int c in Codepoints(s))
             {
                 switch (c)
                 {
@@ -236,30 +232,43 @@ namespace Sigma
             WriteChar('"');
         }
 
-
+        /*
+         * .NET date support is weak. 
+         */
         private void WriteTemporal(object obj)
         {
+            WriteChar('@');
             if (obj is DateTimeOffset)
             {
-                WriteChars("@z");
+                
             }
             else if (obj is DateTime)
             {
-                WriteChars("@D");
             }
-            else if (obj is LocalDate)
+            else if (obj is ZonedDateTime zdt)
             {
-
+                WriteChars(zdt.ToString("uuuu'-'MM'-'dd'T'HH':'mm':'ss;FFFFFFFFFo<Z+HH:mm>'['z']'", CultureInfo.InvariantCulture));
             }
-            else if (obj is LocalDateTime)
+            else if (obj is OffsetDateTime odt)
+            { 
+                WriteChars(odt.ToString(OffsetDateTimePattern.Rfc3339.PatternText, CultureInfo.InvariantCulture));
+            }
+            else if (obj is LocalDateTime ldt)
             {
-                WriteChars("@d");
+                WriteChars(ldt.ToString(LocalDateTimePattern.ExtendedIso.PatternText, CultureInfo.InvariantCulture));
             }
-            else if (obj is LocalTime)
+            else if (obj is LocalDate ld)
             {
-                WriteChars("@t");
+                WriteChars(ld.ToString(LocalDatePattern.Iso.PatternText, CultureInfo.InvariantCulture));
             }
-            WriteChars(obj.ToString());
+            else if (obj is LocalTime lt)
+            {
+                WriteChars(lt.ToString(LocalTimePattern.ExtendedIso.PatternText, CultureInfo.InvariantCulture));
+            }
+            else if (obj is OffsetTime ot)
+            {
+                WriteChars(ot.ToString(OffsetTimePattern.Rfc3339.PatternText, CultureInfo.InvariantCulture));
+            }
         }
 
         private void WriteValue(object value)
@@ -283,23 +292,30 @@ namespace Sigma
             else if (Types.IsTemporal(value))
             {
                 WriteTemporal(value);
-        //   }
-        //    else if (typeof(IDictionary).IsAssignableFrom(typeof(value))
-        //    {
+                //   }
+                //    else if (typeof(IDictionary).IsAssignableFrom(typeof(value))
+                //    {
 
-        //        WriteMap(Map.class.cast(value));
-        //} else if (value is ICollection) {
-        //    WriteList(Collection.class.cast(value));
-        } else if (value is byte[]) {
-            if (allowBytes) {
-                WriteBytes((byte[]) value);
-            } else {
-                WriteBase64((byte[]) value);
+                //        WriteMap(Map.class.cast(value));
+                //} else if (value is ICollection) {
+                //    WriteList(Collection.class.cast(value));
             }
-        } else {
-            WriteObject(value);
+            else if (value is byte[])
+            {
+                if (allowBytes)
+                {
+                    WriteBytes((byte[])value);
+                }
+                else
+                {
+                    WriteBase64((byte[])value);
+                }
+            }
+            else
+            {
+                WriteObject(value);
+            }
         }
-    }
 
     }
 }

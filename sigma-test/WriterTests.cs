@@ -3,6 +3,7 @@ using System;
 using Sigma;
 using System.IO;
 using System.Text;
+using NodaTime;
 
 namespace SigmaTest
 {
@@ -22,6 +23,26 @@ namespace SigmaTest
         }
 
         [Test]
+        public void TestDates()
+        {
+            Console.Out.WriteLine("Date tests");
+            Assert.AreEqual("@2019-08-21", Write(new LocalDate(2019, 8, 21)));
+            Assert.AreEqual("@10:23:56.123456789", Write(LocalTime.FromHourMinuteSecondNanosecond(10, 23, 56, 123456789)));
+            Assert.AreEqual("@10:23:56.123Z", Write(new OffsetTime(LocalTime.FromHourMinuteSecondMillisecondTick(10, 23, 56, 123, 0), Offset.Zero)));
+            Assert.AreEqual("@10:23:56.123+11:00", Write(new OffsetTime(LocalTime.FromHourMinuteSecondMillisecondTick(10, 23, 56, 123, 0), Offset.FromHours(11))));
+            Assert.AreEqual("@10:23:56.123-11:00", Write(new OffsetTime(LocalTime.FromHourMinuteSecondMillisecondTick(10, 23, 56, 123, 0), Offset.FromHours(-11))));
+            Assert.AreEqual("@2019-08-21T10:11:12.123", Write(new LocalDateTime(2019, 08, 21, 10, 11, 12, 123)));
+            Assert.AreEqual("@2019-08-21T10:11:12.123+11:30", Write(new OffsetDateTime(new LocalDateTime(2019, 08, 21, 10, 11, 12, 123), Offset.FromHoursAndMinutes(11,30))));
+            Assert.AreEqual("@2020-01-21T10:11:12-11:30", Write(new OffsetDateTime(new LocalDateTime(2020, 01, 21, 10, 11, 12), Offset.FromHoursAndMinutes(-11, -30)))); // note unexpected behavior
+            Assert.AreEqual("@2019-08-21T10:11:12Z", Write(new OffsetDateTime(new LocalDateTime(2019, 08, 21, 10, 11, 12), Offset.Zero)));
+            Assert.AreEqual("@2019-12-21T10:11:12.123+11:00[Australia/Hobart]", Write(
+                new ZonedDateTime(
+                    new LocalDateTime(2019, 12, 21, 10, 11, 12, 123),
+                    DateTimeZoneProviders.Tzdb.GetZoneOrNull("Australia/Hobart"),
+                    Offset.FromHours(11))));
+        }
+
+        [Test]
         public void TestNull()
         {
             Console.Out.WriteLine("null test");
@@ -33,14 +54,14 @@ namespace SigmaTest
         public void TestNumbers()
         {
             //    Console.Out.WriteLine("Number tests");
-            //Assert.AreEqual("0", Write(0));
-            //Assert.AreEqual("3", Write((byte) 3));
-            //Assert.AreEqual("4", Write((short) 4));
-            //Assert.AreEqual("123456789123", Write(123456789123L));
-            //Assert.AreEqual("1.234", Write(1.234f));
-            //Assert.AreEqual("1.234", Write(1.234));
-            //Assert.AreEqual("1.23468273648723676E+5867", Write(new decimal("1.23468273648723676e5867")));
-            //Assert.AreEqual("1234682736487236765867", Write(new BigInteger("1234682736487236765867")));
+            Assert.AreEqual("0", Write(0));
+            Assert.AreEqual("3", Write((byte)3));
+            Assert.AreEqual("4", Write((short)4));
+            Assert.AreEqual("123456789123", Write(123456789123L));
+            Assert.AreEqual("1.234", Write(1.234f));
+            Assert.AreEqual("1.234", Write(1.234));
+            Assert.AreEqual("123468273648723676000000", Write(1.23468273648723676e23m));
+            Assert.AreEqual("1.234682736487236765867", Write(1.234682736487236765867m));
         }
 
         [Test]
@@ -61,6 +82,8 @@ namespace SigmaTest
             TestUtf8CodePoints(0xE000, 0xE0FF);
             TestUtf8CodePoints(0x10000, 0x100FF);
         }
+
+
 
         private void TestUtf8CodePoints(int start, int end)
         {
