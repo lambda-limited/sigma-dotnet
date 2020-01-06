@@ -40,6 +40,11 @@ namespace SigmaTest
                     new LocalDateTime(2019, 12, 21, 10, 11, 12, 123),
                     DateTimeZoneProviders.Tzdb.GetZoneOrNull("Australia/Hobart"),
                     Offset.FromHours(11))));
+            // native .NET types
+            Assert.AreEqual("@2019-08-21T10:11:12.123+11:30", Write(new DateTimeOffset(2019, 08, 21, 10, 11, 12, 123, new TimeSpan(11, 30, 0))));
+            Assert.AreEqual("@2019-08-21T10:11:12.123-11:30", Write(new DateTimeOffset(2019, 08, 21, 10, 11, 12, 123, new TimeSpan(-11, -30, 0))));
+            Assert.AreEqual("@2019-08-21T10:11:12Z", Write(new DateTimeOffset(2019, 08, 21, 10, 11, 12, TimeSpan.Zero)));
+            Assert.AreEqual("@2019-08-21T10:11:12.123", Write(new DateTime(2019, 08, 21, 10, 11, 12, 123)));
         }
 
         [Test]

@@ -238,12 +238,15 @@ namespace Sigma
         private void WriteTemporal(object obj)
         {
             WriteChar('@');
-            if (obj is DateTimeOffset)
+            if (obj is DateTimeOffset dto)
             {
-                
+                OffsetDateTime odt = OffsetDateTime.FromDateTimeOffset(dto);
+                WriteChars(odt.ToString(OffsetDateTimePattern.Rfc3339.PatternText, CultureInfo.InvariantCulture));
             }
-            else if (obj is DateTime)
+            else if (obj is DateTime dt)
             {
+                LocalDateTime ldt = LocalDateTime.FromDateTime(dt);
+                WriteChars(ldt.ToString(LocalDateTimePattern.ExtendedIso.PatternText, CultureInfo.InvariantCulture));
             }
             else if (obj is ZonedDateTime zdt)
             {
