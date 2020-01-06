@@ -4,6 +4,7 @@ using Sigma;
 using System.IO;
 using System.Text;
 using NodaTime;
+using System.Collections.Generic;
 
 namespace SigmaTest
 {
@@ -32,7 +33,7 @@ namespace SigmaTest
             Assert.AreEqual("@10:23:56.123+11:00", Write(new OffsetTime(LocalTime.FromHourMinuteSecondMillisecondTick(10, 23, 56, 123, 0), Offset.FromHours(11))));
             Assert.AreEqual("@10:23:56.123-11:00", Write(new OffsetTime(LocalTime.FromHourMinuteSecondMillisecondTick(10, 23, 56, 123, 0), Offset.FromHours(-11))));
             Assert.AreEqual("@2019-08-21T10:11:12.123", Write(new LocalDateTime(2019, 08, 21, 10, 11, 12, 123)));
-            Assert.AreEqual("@2019-08-21T10:11:12.123+11:30", Write(new OffsetDateTime(new LocalDateTime(2019, 08, 21, 10, 11, 12, 123), Offset.FromHoursAndMinutes(11,30))));
+            Assert.AreEqual("@2019-08-21T10:11:12.123+11:30", Write(new OffsetDateTime(new LocalDateTime(2019, 08, 21, 10, 11, 12, 123), Offset.FromHoursAndMinutes(11, 30))));
             Assert.AreEqual("@2020-01-21T10:11:12-11:30", Write(new OffsetDateTime(new LocalDateTime(2020, 01, 21, 10, 11, 12), Offset.FromHoursAndMinutes(-11, -30)))); // note unexpected behavior
             Assert.AreEqual("@2019-08-21T10:11:12Z", Write(new OffsetDateTime(new LocalDateTime(2019, 08, 21, 10, 11, 12), Offset.Zero)));
             Assert.AreEqual("@2019-12-21T10:11:12.123+11:00[Australia/Hobart]", Write(
@@ -46,6 +47,41 @@ namespace SigmaTest
             Assert.AreEqual("@2019-08-21T10:11:12Z", Write(new DateTimeOffset(2019, 08, 21, 10, 11, 12, TimeSpan.Zero)));
             Assert.AreEqual("@2019-08-21T10:11:12.123", Write(new DateTime(2019, 08, 21, 10, 11, 12, 123)));
         }
+
+        [Test]
+        public void TestList()
+        {
+            Console.Out.WriteLine("List tests");
+            List<object> list = new List<object>();
+            Assert.AreEqual("[]", Write(list));
+            list.Add(123);
+            Assert.AreEqual("[123]", Write(list));
+            list.Add("test");
+            Assert.AreEqual("[123,\"test\"]", Write(list));
+            list.Add(new List<object>());
+            Assert.AreEqual("[123,\"test\",[]]", Write(list));
+        }
+
+        [Test]
+        public void TestMap()
+        {
+            Console.Out.WriteLine("Map tests");
+            Dictionary<string, object> map = new Dictionary<string, object>();
+            Assert.AreEqual("{}", Write(map));
+            map.Add("a", 123);
+            Assert.AreEqual("{\"a\"=123}", Write(map));
+            map.Add("b", "test");
+            Assert.AreEqual("{\"a\"=123,\"b\"=\"test\"}", Write(map));
+            map.Add("c d", false);
+            Assert.AreEqual("{\"a\"=123,\"b\"=\"test\",\"c d\"=&f}", Write(map));
+            map.Add("e=f", null);
+            Assert.AreEqual("{\"a\"=123,\"b\"=\"test\",\"c d\"=&f,\"e=f\"=&n}", Write(map));
+            Dictionary<object, int> hmap = new Dictionary<object, int>();
+            hmap.Add(1, 2);
+            hmap.Add("3", 4);
+            Assert.AreEqual("{1=2,\"3\"=4}", Write(hmap));
+        }
+
 
         [Test]
         public void TestNull()

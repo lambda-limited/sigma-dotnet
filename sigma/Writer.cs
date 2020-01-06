@@ -1,6 +1,7 @@
 ﻿using NodaTime;
 using NodaTime.Text;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -113,7 +114,7 @@ namespace Sigma
             output.Write(bytes, 0, bytes.Length);
         }
 
-        private void WriteList(ICollection<object> list)
+        private void WriteList(ICollection list)
         {
             WriteChar('[');
             string separator = "";
@@ -126,11 +127,11 @@ namespace Sigma
             WriteChar(']');
         }
 
-        private void WriteMap(IDictionary<string, object> map)
+        private void WriteMap(IDictionary map)
         {
             string separator = "";
             WriteChar('{');
-            foreach (KeyValuePair<string, object> kvp in map)
+            foreach (DictionaryEntry kvp in map)
             {
                 WriteChars(separator);
                 WriteValue(kvp.Key);
@@ -253,7 +254,7 @@ namespace Sigma
                 WriteChars(zdt.ToString("uuuu'-'MM'-'dd'T'HH':'mm':'ss;FFFFFFFFFo<Z+HH:mm>'['z']'", CultureInfo.InvariantCulture));
             }
             else if (obj is OffsetDateTime odt)
-            { 
+            {
                 WriteChars(odt.ToString(OffsetDateTimePattern.Rfc3339.PatternText, CultureInfo.InvariantCulture));
             }
             else if (obj is LocalDateTime ldt)
@@ -302,16 +303,27 @@ namespace Sigma
                 //        WriteMap(Map.class.cast(value));
                 //} else if (value is ICollection) {
                 //    WriteList(Collection.class.cast(value));
+
+            }
+            // must check dictionary before collection because 
+            // IDictionary inherits ICollection
+            else if (value is IDictionary map)  
+            {                                   
+                WriteMap(map);
+            }
+            else if (value is ICollection list)
+            {
+                WriteList(list);
             }
             else if (value is byte[])
             {
                 if (allowBytes)
                 {
-                    WriteBytes((byte[])value);
-                }
+                    WriteBytes((byte[]) value);
+}
                 else
                 {
-                    WriteBase64((byte[])value);
+                    WriteBase64((byte[]) value);
                 }
             }
             else
