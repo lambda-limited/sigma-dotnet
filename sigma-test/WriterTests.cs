@@ -24,6 +24,14 @@ namespace SigmaTest
         }
 
         [Test]
+        public void testBase64()
+        {
+            Console.Out.WriteLine("Base64 tests");
+            Assert.AreEqual("*", Write(Encoding.ASCII.GetBytes(""), false));
+            Assert.AreEqual("*VGhlIHF1aWNrIGJyb3duIGZveA==", Write(Encoding.ASCII.GetBytes("The quick brown fox"), false));
+        }
+
+        [Test]
         public void TestBinary()
         {
             Console.Out.WriteLine("Base64 tests");
