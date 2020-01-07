@@ -17,12 +17,16 @@ namespace Sigma
 
         public static Type GetClass(string typeName)
         {
-            return TYPENAME_TO_CLASS[typeName];
+            return TYPENAME_TO_CLASS.ContainsKey(typeName)
+                ? TYPENAME_TO_CLASS[typeName]
+                : null;
         }
 
         public static string GetTypeName(Type klass)
         {
-            return CLASS_TO_TYPENAME[klass];
+            return CLASS_TO_TYPENAME.ContainsKey(klass)
+                ? CLASS_TO_TYPENAME[klass]
+                : null;
         }
 
         public static void UnregisterAll()

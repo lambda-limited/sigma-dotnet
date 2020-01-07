@@ -24,16 +24,26 @@ namespace SigmaTest
         }
 
         [Test]
+        public void TestBinary()
+        {
+            Console.Out.WriteLine("Base64 tests");
+            Assert.AreEqual("|3|abc", Write(new byte[] { 0x61, 0x62, 0x63 }));
+        }
+
+        [Test]
         public void TestDates()
         {
             Console.Out.WriteLine("Date tests");
             Assert.AreEqual("@2019-08-21", Write(new LocalDate(2019, 8, 21)));
             Assert.AreEqual("@10:23:56.123456789", Write(LocalTime.FromHourMinuteSecondNanosecond(10, 23, 56, 123456789)));
+            Assert.AreEqual("@00:00:00", Write(LocalTime.FromHourMinuteSecondNanosecond(0, 0, 0, 0)));
             Assert.AreEqual("@10:23:56.123Z", Write(new OffsetTime(LocalTime.FromHourMinuteSecondMillisecondTick(10, 23, 56, 123, 0), Offset.Zero)));
             Assert.AreEqual("@10:23:56.123+11:00", Write(new OffsetTime(LocalTime.FromHourMinuteSecondMillisecondTick(10, 23, 56, 123, 0), Offset.FromHours(11))));
             Assert.AreEqual("@10:23:56.123-11:00", Write(new OffsetTime(LocalTime.FromHourMinuteSecondMillisecondTick(10, 23, 56, 123, 0), Offset.FromHours(-11))));
             Assert.AreEqual("@2019-08-21T10:11:12.123", Write(new LocalDateTime(2019, 08, 21, 10, 11, 12, 123)));
+            Assert.AreEqual("@2019-08-21T00:00:00", Write(new LocalDateTime(2019, 08, 21, 0, 0, 0, 0)));
             Assert.AreEqual("@2019-08-21T10:11:12.123+11:30", Write(new OffsetDateTime(new LocalDateTime(2019, 08, 21, 10, 11, 12, 123), Offset.FromHoursAndMinutes(11, 30))));
+            Assert.AreEqual("@2019-08-21T00:00:00+11:30", Write(new OffsetDateTime(new LocalDateTime(2019, 08, 21, 0, 0, 0, 0), Offset.FromHoursAndMinutes(11, 30))));
             Assert.AreEqual("@2020-01-21T10:11:12-11:30", Write(new OffsetDateTime(new LocalDateTime(2020, 01, 21, 10, 11, 12), Offset.FromHoursAndMinutes(-11, -30)))); // note unexpected behavior
             Assert.AreEqual("@2019-08-21T10:11:12Z", Write(new OffsetDateTime(new LocalDateTime(2019, 08, 21, 10, 11, 12), Offset.Zero)));
             Assert.AreEqual("@2019-12-21T10:11:12.123+11:00[Australia/Hobart]", Write(
@@ -106,6 +116,25 @@ namespace SigmaTest
         }
 
         [Test]
+        public void TestObject()
+        {
+            Console.Out.WriteLine("Object tests");
+            Types.UnregisterAll();
+            TestModel m = new TestModel();
+            WriteErr(m, "No object type registered for class");
+            Types.Register(typeof(TestModel), "model");
+            string result = Write(m);
+            Console.Out.WriteLine(result);
+            Assert.AreEqual("model{B=53,Bl=&t,Bytes=|6|abcdef,I=54,L=55,Ld=@2019-03-21,Ldt=@2019-08-22T10:11:12.123,"
+                    + "List=[\"abc\"],LocalTime=@10:11:12,Map={\"xyx\"=99,9=9},OffsetTime=@10:11:12+11:20,"
+                    + "S=56,Str=\"string\",Tree={2=4,3=9},ZonedDateTime=@2020-01-01T00:00:00+11:00[Australia/Hobart]}",
+                    result);
+
+        }
+        //
+        //model{B=53,Bl=&t,Bytes=|6|abcdef,I=54,L=55,Ld=@2019-03-21,Ldt=@2019-08-22T10:11:12.123,List=["abc"],LocalTime=@10:11:12,Map={"xyx"=99,9=9},OffsetTime=@10:11:12+11:20,S=56,Str="string",Tree={2=4,3=9},ZonedDateTime=@2019-12-21T10:11:12.123+11:00[Australia/Hobart]}
+
+        [Test]
         public void TestString()
         {
             Console.Out.WriteLine("String tests");
@@ -164,7 +193,11 @@ namespace SigmaTest
             }
             catch (Exception ex)
             {
-                Assert.IsTrue(ex.Message.Contains(msgFragment));
+                if (!ex.Message.Contains(msgFragment))
+                {
+                    Console.Out.WriteLine("Expected '" + msgFragment + "'but got '" + ex.Message + "'");
+                    Assert.Fail();
+                }
             }
         }
     }

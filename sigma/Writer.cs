@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Reflection;
 using System.Text;
 
 namespace Sigma
@@ -155,26 +156,21 @@ namespace Sigma
                 string typeName = Types.GetTypeName(obj.GetType());
                 if (typeName == null)
                 {
-                    throw new SigmaException("No obj type registered for class " + obj.GetType().Name);
+                    throw new SigmaException("No object type registered for class " + obj.GetType().Name);
                 }
                 string separator = "";
                 WriteChars(typeName);
                 WriteChar('{');
-                //BeanInfo beanInfo = Introspector.getBeanInfo(obj.getClass());
-                //PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
-                //for (PropertyDescriptor prop : propertyDescriptors)
-                //{
-                //    if (!prop.getName().equals("class"))
-                //    {
-                //        WriteChars(separator);
-                //        WriteName(prop.getName());
-                //        WriteChar('=');
-                //        Method getter = prop.getReadMethod();
-                //        object value = getter.invoke(obj);
-                //        WriteValue(value);
-                //        separator = ",";
-                //    }
-                //}
+                PropertyInfo[] propInfo = obj.GetType().GetProperties();
+                foreach (PropertyInfo p in propInfo)
+                {
+                    WriteChars(separator);
+                    WriteChars(p.Name);
+                    WriteChar('=');
+                    object value = p.GetValue(obj, null);
+                    WriteValue(value);
+                    separator = ",";
+                }
                 WriteChar('}');
             }
             catch (IOException ex)
@@ -296,14 +292,6 @@ namespace Sigma
             else if (Types.IsTemporal(value))
             {
                 WriteTemporal(value);
-                //   }
-                //    else if (typeof(IDictionary).IsAssignableFrom(typeof(value))
-                //    {
-
-                //        WriteMap(Map.class.cast(value));
-                //} else if (value is ICollection) {
-                //    WriteList(Collection.class.cast(value));
-
             }
             // must check dictionary before collection because 
             // IDictionary inherits ICollection
@@ -311,21 +299,23 @@ namespace Sigma
             {                                   
                 WriteMap(map);
             }
-            else if (value is ICollection list)
-            {
-                WriteList(list);
-            }
+            // same for byte[]
             else if (value is byte[])
             {
                 if (allowBytes)
                 {
-                    WriteBytes((byte[]) value);
-}
+                    WriteBytes((byte[])value);
+                }
                 else
                 {
-                    WriteBase64((byte[]) value);
+                    WriteBase64((byte[])value);
                 }
             }
+            else if (value is ICollection list)
+            {
+                WriteList(list);
+            }
+
             else
             {
                 WriteObject(value);
