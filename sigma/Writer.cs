@@ -40,7 +40,7 @@ namespace Sigma
             WriteChar('*');
             if (b.Length > 0)
             {
-                String bytes = Convert.ToBase64String(b);
+                String bytes = Convert.ToBase64String(b).TrimEnd('=');  // strip trailing =
                 WriteChars(bytes);
             }
         }
@@ -146,7 +146,17 @@ namespace Sigma
 
         private void WriteNumber(object obj)
         {
-            WriteChars(obj.ToString());
+            if (obj is decimal d)
+            {
+                WriteChars(d.ToString("G"));
+            } else if (obj is double dbl)
+            {
+                WriteChars(dbl.ToString("G"));
+            } else
+            {
+                WriteChars(obj.ToString());
+            }
+
         }
 
         private void WriteObject(object obj)
@@ -232,7 +242,7 @@ namespace Sigma
         /*
          * .NET date support is weak. 
          */
-        private void WriteTemporal(object obj)
+        private void WriteDate(object obj)
         {
             WriteChar('@');
             if (obj is DateTimeOffset dto)
@@ -291,10 +301,10 @@ namespace Sigma
             }
             else if (Types.IsTemporal(value))
             {
-                WriteTemporal(value);
+                WriteDate(value);
             }
             // must check dictionary before collection because 
-            // IDictionary inherits ICollection
+            // Dictionaries inherits ICollection
             else if (value is IDictionary map)  
             {                                   
                 WriteMap(map);

@@ -6,33 +6,33 @@ namespace Sigma
 {
     public class Types
     {
-        private static readonly ConcurrentDictionary<Type, string> CLASS_TO_TYPENAME = new ConcurrentDictionary<Type, string>();
-        private static readonly ConcurrentDictionary<string, Type> TYPENAME_TO_CLASS = new ConcurrentDictionary<string, Type>();
+        private static readonly ConcurrentDictionary<Type, string> TYPE_TO_TYPENAME = new ConcurrentDictionary<Type, string>();
+        private static readonly ConcurrentDictionary<string, Type> TYPENAME_TO_TYPE = new ConcurrentDictionary<string, Type>();
 
-        public static void Register(Type klass, string typeName)
+        public static void Register(Type type, string typeName)
         {
-            CLASS_TO_TYPENAME[klass] = typeName;
-            TYPENAME_TO_CLASS[typeName] = klass;
+            TYPE_TO_TYPENAME[type] = typeName;
+            TYPENAME_TO_TYPE[typeName] = type;
         }
 
-        public static Type GetClass(string typeName)
+        public static Type GetType(string typeName)
         {
-            return TYPENAME_TO_CLASS.ContainsKey(typeName)
-                ? TYPENAME_TO_CLASS[typeName]
+            return TYPENAME_TO_TYPE.ContainsKey(typeName)
+                ? TYPENAME_TO_TYPE[typeName]
                 : null;
         }
 
         public static string GetTypeName(Type klass)
         {
-            return CLASS_TO_TYPENAME.ContainsKey(klass)
-                ? CLASS_TO_TYPENAME[klass]
+            return TYPE_TO_TYPENAME.ContainsKey(klass)
+                ? TYPE_TO_TYPENAME[klass]
                 : null;
         }
 
         public static void UnregisterAll()
         {
-            CLASS_TO_TYPENAME.Clear();
-            TYPENAME_TO_CLASS.Clear();
+            TYPE_TO_TYPENAME.Clear();
+            TYPENAME_TO_TYPE.Clear();
         }
 
 
