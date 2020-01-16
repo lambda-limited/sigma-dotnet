@@ -303,13 +303,10 @@ namespace Sigma
             {
                 WriteDate(value);
             }
-            // must check dictionary before collection because 
-            // Dictionaries inherits ICollection
             else if (value is IDictionary map)  
             {                                   
                 WriteMap(map);
             }
-            // same for byte[]
             else if (value is byte[])
             {
                 if (allowBytes)
@@ -321,11 +318,10 @@ namespace Sigma
                     WriteBase64((byte[])value);
                 }
             }
-            else if (value is ICollection list)
+            else if (value is IList list) // must do IList after byte[]
             {
                 WriteList(list);
             }
-
             else
             {
                 WriteObject(value);

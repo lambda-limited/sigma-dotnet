@@ -5,6 +5,7 @@ using Sigma;
 using System.IO;
 using NodaTime;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace SigmaTest
 
@@ -105,6 +106,8 @@ namespace SigmaTest
             ReadErr("+1.23e+234", "invalid number");
         }
 
+
+
         private Object read(string s)
         {
             Reader r = new Reader(s);
@@ -132,7 +135,7 @@ namespace SigmaTest
         private string ReadWrite(string r, Type type)
         {
             Object o = read(r);
-            Assert.IsTrue(o.GetType() == type);
+            Assert.IsTrue(type.IsAssignableFrom(o.GetType()));
             String w = Write(o);
             return w;
         }
