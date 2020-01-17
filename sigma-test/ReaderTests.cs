@@ -106,6 +106,40 @@ namespace SigmaTest
             ReadErr("+1.23e+234", "invalid number");
         }
 
+        [Test]
+        public void TestObjects()
+        {
+            Console.Out.WriteLine("Object Tests");
+            Types.UnregisterAll();
+            ReadErr("model{}", "type 'model' is not registered");
+            Types.Register(typeof(TestModel), "model");
+            Assert.AreEqual("model{B=54,Bl=&f,Bytes=|7|abcdefg,I=55,L=56,Ld=@2019-04-21,Ldt=@2019-09-22T11:12:13.123456789,"
+                    + "List=[\"xyz\"],LocalTime=@08:09:10,Map={\"abc\"=22},OffsetTime=@07:08:09+11:00,S=23,Str=\"test\",Tree={4=16,5=25},"
+                    + "ZonedDateTime=@2020-01-02T01:02:03.456+11:00[Australia/Hobart]}",
+                    ReadWrite("model { "
+                            + "  B=54,"
+                            + "  Bl=&f,"
+                            + "  Bytes=|7|abcdefg,"
+                            + "  I=55,"
+                            + "  L=56,"
+                            + "  Ld=@2019-04-21,"
+                            + "  Ldt=@2019-09-22T11:12:13.123456789,"
+                            + "  List=["
+                            + "    \"xyz\""
+                            + "  ],"
+                            + "  LocalTime=@08:09:10,"
+                            + "  Map={"
+                            + "    \"abc\"=22"
+                            + "  },"
+                            + "  OffsetTime=@07:08:09+11:00,"
+                            + "  S=23,"
+                            + "  Str=\"test\","
+                            + "  Tree={"
+                            + "   5=25,"
+                            + "   4=16"
+                            + "  },"
+                            + "  ZonedDateTime=@2020-01-02T01:02:03.456+11:00[Australia/Hobart]}", typeof(TestModel)));
+        }
 
 
         private Object read(string s)

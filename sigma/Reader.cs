@@ -491,7 +491,7 @@ namespace Sigma
             }
             try
             {
-                object obj = type.GetConstructor(null).Invoke(null);
+                object obj = Activator.CreateInstance(type);
                 ReadObjectFields(obj);
                 ConsumeOrError('}');
                 return obj;
@@ -518,7 +518,7 @@ namespace Sigma
                 try
                 {
                     // so coerce here --> Type pt = p.PropertyType;
-                    p.SetValue(obj, value);
+                    p.SetValue(obj, Types.CoerceType(value, p.PropertyType));
                     return;
                 }
                 catch (Exception ex)
