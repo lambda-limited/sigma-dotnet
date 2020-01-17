@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29613.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sigma", "sigma\Sigma.csproj", "{4493B1ED-3A2B-46AD-875A-415461D46A57}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SigmaTest", "sigma-test\SigmaTest.csproj", "{23B89684-C7F5-4CDD-A469-85767C49CB40}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4493B1ED-3A2B-46AD-875A-415461D46A57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4493B1ED-3A2B-46AD-875A-415461D46A57}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4493B1ED-3A2B-46AD-875A-415461D46A57}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4493B1ED-3A2B-46AD-875A-415461D46A57}.Release|Any CPU.Build.0 = Release|Any CPU
+		{23B89684-C7F5-4CDD-A469-85767C49CB40}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{23B89684-C7F5-4CDD-A469-85767C49CB40}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{23B89684-C7F5-4CDD-A469-85767C49CB40}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{23B89684-C7F5-4CDD-A469-85767C49CB40}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {33BD581E-2329-4F8F-9A31-3CB8C492882E}
+	EndGlobalSection
+EndGlobal
