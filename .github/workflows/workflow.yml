@@ -28,8 +28,8 @@ jobs:
     - name: Setup Nuget and download dependend Packages
       uses: nuget/setup-nuget@v1
 
-    - name: Register Github Package Repository (GPR) with Nuget
-      run: nuget sources add -name "GPR" -Source https://nuget.pkg.github.com/lambda-limited/index.json -Username ${{ secrets.REPO_USERNAME }} -Password ${{ secrets.REPO_TOKEN }} 
+    # - name: Register Github Package Repository (GPR) with Nuget
+      # run: nuget sources add -name "GPR" -Source https://nuget.pkg.github.com/lambda-limited/index.json -Username ${{ secrets.REPO_USERNAME }} -Password ${{ secrets.REPO_TOKEN }} 
 
     - name: Download dependencies from Nuget Repository
       run: nuget restore sigma-dotnet.sln
