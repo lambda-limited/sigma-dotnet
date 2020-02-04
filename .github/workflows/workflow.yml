@@ -22,6 +22,7 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         source-url: https://nuget.pkg.github.com/lambda-limited/index.json
+        nuget-api-key: ${{secrets.REPO_TOKEN}}
       env:
         NUGET_AUTH_TOKEN: ${{secrets.REPO_TOKEN}}
 
@@ -43,8 +44,8 @@ jobs:
     - name: Create NuGet package
       run: dotnet pack sigma -c Release
       
-    # - name: Push release pack to GPR
-      # run: nuget push Sigma.lib\**\*.nupkg -source "GPR" -SkipDuplicate    
+    - name: Push package to GPR
+      run: dotnet nuget push sigma/bin/Release/*.nupkg  
         
 
         
