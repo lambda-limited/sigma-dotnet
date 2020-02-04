@@ -521,7 +521,7 @@ namespace Sigma
                     p.SetValue(obj, Types.CoerceType(value, p.PropertyType));
                     return;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     throw Error("unable to set property {0}.{1}", obj.GetType().Name, identifier); ;
                 }

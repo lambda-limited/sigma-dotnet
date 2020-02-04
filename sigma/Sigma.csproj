@@ -1,7 +1,13 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Company>Lambda Pty Ltd</Company>
+    <Description>Sigma serialisation library</Description>
+    <Copyright>2020 Lambda Pty Ltd</Copyright>
+    <Authors>James Thorpe</Authors>
+    <Version>0.5.0</Version>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
