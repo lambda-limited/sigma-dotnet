@@ -109,6 +109,16 @@ namespace Sigma
    */
         public static Object CoerceType(Object value, Type type)
         {
+            if (value == null)
+            {
+                if (type.IsPrimitive)
+                {
+                    throw new SigmaException(string.Format("unable to coerce null to type '{0}'", type.Name));
+                } else
+                {
+                    return null;
+                }
+            }
             if (type.IsAssignableFrom(value.GetType()))
             {
                 return value;  // assignment compatible already (ie value is a subclass of k)

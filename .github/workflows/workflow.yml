@@ -1,0 +1,41 @@
+name: Lambda NuGet Workflow
+
+# Build Sigma .NET Client and run unit tests on each push
+
+# If a release is published then compile and deploy
+# a package corresponding to the release in the github package repository
+
+
+on:
+  push
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v1
+      
+    - name: Set up .NET
+      uses: actions/setup-dotnet@v1
+
+    - name: Setup Nuget and download dependend Packages
+      uses: nuget/setup-nuget@v1
+
+    - name: Register Github Package Repository (GPR) with Nuget
+      run: nuget sources add -name "GPR" -Source https://nuget.pkg.github.com/lambda-limited/index.json -Username ${{ secrets.REPO_USERNAME }} -Password ${{ secrets.REPO_TOKEN }} 
+
+    - name: Download dependencies from Nuget Repository
+    - run: nuget restore sigma-dotnet.sln
+    
+    - name: Create release build
+      run: dotnet build -c Release
+      
+    # - name: Push release pack to GPR
+      # run: nuget push Sigma.lib\**\*.nupkg -source "GPR" -SkipDuplicate    
+        
+
+        
+        
