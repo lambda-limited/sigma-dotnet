@@ -41,7 +41,7 @@ jobs:
       run: dotnet test --verbosity normal
       
     - name: Create NuGet package
-      run: dotnet pack sigma-dotnet/sigma -c Release
+      run: dotnet pack sigma -c Release
       
     # - name: Push release pack to GPR
       # run: nuget push Sigma.lib\**\*.nupkg -source "GPR" -SkipDuplicate    
