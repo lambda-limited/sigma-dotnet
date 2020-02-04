@@ -45,8 +45,7 @@ jobs:
       run: dotnet pack sigma -c Release
       
     - name: Push package to GPR
-      run: dotnet nuget push sigma/bin/Release/*.nupkg  
-        
-
-        
+      run: dotnet nuget push sigma/bin/Release/*.nupkg
+      with:
+        nuget-api-key: ${{secrets.REPO_TOKEN}}
         
