@@ -22,12 +22,13 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         source-url: https://nuget.pkg.github.com/lambda-limited/index.json
-        nuget-api-key: ${{secrets.REPO_TOKEN}}
       env:
         NUGET_AUTH_TOKEN: ${{secrets.REPO_TOKEN}}
 
     - name: Setup Nuget and download dependend Packages
       uses: nuget/setup-nuget@v1
+      with:
+        nuget-api-key: ${{secrets.REPO_TOKEN}}
 
     # - name: Register Github Package Repository (GPR) with Nuget
       # run: nuget sources add -name "GPR" -Source https://nuget.pkg.github.com/lambda-limited/index.json -Username ${{ secrets.REPO_USERNAME }} -Password ${{ secrets.REPO_TOKEN }} 
@@ -46,6 +47,4 @@ jobs:
       
     - name: Push package to GPR
       run: dotnet nuget push sigma/bin/Release/*.nupkg
-      with:
-        nuget-api-key: ${{secrets.REPO_TOKEN}}
         
